@@ -29,15 +29,28 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     }
 
+    .header-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
     h1 {
       font-size: 22px;
-      margin-bottom: 6px;
       color: #1a2533;
     }
 
-    .subtitle {
-      font-size: 14px;
-      color: #5c6877;
+    .top-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 2px solid #e2e7ee;
+      padding-bottom: 12px;
       margin-bottom: 20px;
     }
 
@@ -45,9 +58,6 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      border-bottom: 2px solid #e2e7ee;
-      padding-bottom: 12px;
-      margin-bottom: 20px;
     }
 
     .tab-btn {
@@ -70,6 +80,22 @@
       background-color: #1d5bbf;
       color: #ffffff;
       border-color: #1d5bbf;
+    }
+
+    .add-btn {
+      padding: 9px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffffff;
+      background-color: #1f7a3f;
+      border: 1px solid #1f7a3f;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .add-btn:hover {
+      background-color: #186332;
     }
 
     .tab-panel {
@@ -134,14 +160,187 @@
       font-weight: 600;
       white-space: nowrap;
     }
+
+    /* Стилі модального вікна (попапу) */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(18, 26, 38, 0.55);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 1000;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-window {
+      background-color: #ffffff;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 480px;
+      border: 1px solid #dce1e7;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background-color: #f0f4f8;
+      border-bottom: 1px solid #dde2e9;
+    }
+
+    .modal-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #1a2533;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      line-height: 1;
+      color: #5c6877;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .modal-close:hover {
+      background-color: #e2e7ee;
+      color: #1a2533;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 5px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 9px 12px;
+      font-size: 14px;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      color: #222;
+      background-color: #fff;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #1d5bbf;
+      box-shadow: 0 0 0 2px rgba(29, 91, 191, 0.15);
+    }
+
+    .form-error {
+      display: none;
+      margin-top: 8px;
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #b91c1c;
+      background-color: #fef2f2;
+      border: 1px solid #f87171;
+      border-radius: 6px;
+    }
+
+    .form-error.visible {
+      display: block;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid #eef1f6;
+    }
+
+    .btn-cancel {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #3b4859;
+      background-color: #eef1f6;
+      border: 1px solid #d0d7e2;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-cancel:hover {
+      background-color: #e1e7f0;
+    }
+
+    .btn-submit {
+      padding: 8px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffffff;
+      background-color: #1d5bbf;
+      border: 1px solid #1d5bbf;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-submit:hover {
+      background-color: #164694;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Мережа магазинів автозапчастин</h1>
-   
-    <div class="tabs-nav" id="tabs-nav" role="tablist"></div>
+    <div class="header-bar">
+      <h1>Мережа магазинів автозапчастин</h1>
+    </div>
+
+    <div class="top-controls">
+      <div class="tabs-nav" id="tabs-nav" role="tablist"></div>
+      <button type="button" class="add-btn" id="open-modal-btn">+ Додати</button>
+    </div>
+
     <div id="tables-container"></div>
+  </div>
+
+  <!-- Попап з динамічною формою додавання -->
+  <div class="modal-overlay" id="add-modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Додати запис</h2>
+        <button type="button" class="modal-close" id="close-modal-btn" aria-label="Закрити">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="entity-form" novalidate>
+          <div id="form-fields-container"></div>
+          <div class="form-error" id="form-error-msg">Будь ласка, заповніть усі поля форми.</div>
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" id="cancel-modal-btn">Скасувати</button>
+            <button type="submit" class="btn-submit" id="submit-form-btn">Зберегти у таблицю</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -265,17 +464,17 @@
       }
     ];
 
-    // Конфігурація сутностей та колонок таблиць
+    // Конфігурація сутностей, колонок таблиць і полів форми
     let entitiesConfig = [
       {
         id: "parts",
         title: "Запчастини",
         columns: [
-          { key: "code", label: "Код товару" },
-          { key: "name", label: "Назва" },
-          { key: "model", label: "Модель" },
-          { key: "price", label: "Ціна" },
-          { key: "storeAddress", label: "Адреса магазина" }
+          { key: "code", label: "Код товару", type: "text", placeholder: "Напр., AP-7015" },
+          { key: "name", label: "Назва", type: "text", placeholder: "Напр., Диск гальмівний" },
+          { key: "model", label: "Модель", type: "text", placeholder: "Напр., Brembo 09.9772.11" },
+          { key: "price", label: "Ціна", type: "text", placeholder: "Напр., 2 150 грн" },
+          { key: "storeAddress", label: "Адреса магазина", type: "text", placeholder: "Напр., м. Київ, вул. Велика Васильківська, 114" }
         ],
         data: partsData
       },
@@ -283,11 +482,11 @@
         id: "employees",
         title: "Співробітники",
         columns: [
-          { key: "fullName", label: "ПІБ" },
-          { key: "position", label: "Посада" },
-          { key: "hireDate", label: "Дата найму" },
-          { key: "onVacation", label: "Відпустка" },
-          { key: "storeAddress", label: "Адреса магазина" }
+          { key: "fullName", label: "ПІБ", type: "text", placeholder: "Прізвище Ім'я По батькові" },
+          { key: "position", label: "Посада", type: "text", placeholder: "Напр., Продавець, Бухгалтер, Касир, Охоронець" },
+          { key: "hireDate", label: "Дата найму", type: "text", placeholder: "ДД.ММ.РРРР (напр., 12.04.2024)" },
+          { key: "onVacation", label: "Відпустка", type: "select", options: ["Ні", "Так"] },
+          { key: "storeAddress", label: "Адреса магазина", type: "text", placeholder: "Напр., м. Харків, просп. Науки, 48" }
         ],
         data: employeesData
       },
@@ -295,14 +494,55 @@
         id: "stores",
         title: "Магазини",
         columns: [
-          { key: "name", label: "Назва" },
-          { key: "storeAddress", label: "Адреса магазина" },
-          { key: "workingHours", label: "Час роботи" },
-          { key: "hasDelivery", label: "Наявність доставки" }
+          { key: "name", label: "Назва", type: "text", placeholder: "Напр., АвтоМастер Схід" },
+          { key: "storeAddress", label: "Адреса магазина", type: "text", placeholder: "Напр., м. Одеса, вул. Приморська, 22" },
+          { key: "workingHours", label: "Час роботи", type: "text", placeholder: "Напр., Пн–Сб: 09:00–19:00" },
+          { key: "hasDelivery", label: "Наявність доставки", type: "select", options: ["Так", "Ні"] }
         ],
         data: storesData
       }
     ];
+
+    // Змінна для відстеження поточного активного таба
+    let activeEntityId = entitiesConfig[0].id;
+
+    // Допоміжна функція пошуку конфігурації сутності за її id
+    function getEntityById(entityId) {
+      for (let i = 0; i < entitiesConfig.length; i++) {
+        if (entitiesConfig[i].id === entityId) {
+          return entitiesConfig[i];
+        }
+      }
+      return null;
+    }
+
+    // Створення одного рядка таблиці (tr) для запису сутності
+    function createTableRow(entity, item) {
+      let tr = document.createElement("tr");
+
+      for (let colIndex = 0; colIndex < entity.columns.length; colIndex++) {
+        let colKey = entity.columns[colIndex].key;
+        let cellValue = item[colKey];
+        let td = document.createElement("td");
+
+        if (colKey === "onVacation" || colKey === "hasDelivery") {
+          let badge = document.createElement("span");
+          let isYes = cellValue === "Так";
+          badge.className = isYes ? "badge badge-yes" : "badge badge-no";
+          badge.textContent = cellValue;
+          td.appendChild(badge);
+        } else if (colKey === "price") {
+          td.className = "price-cell";
+          td.textContent = cellValue;
+        } else {
+          td.textContent = cellValue;
+        }
+
+        tr.appendChild(td);
+      }
+
+      return tr;
+    }
 
     // Функція створення HTML-таблиці для конкретної сутності
     function createEntityTable(entity) {
@@ -328,32 +568,11 @@
 
       // Створення тіла таблиці (tbody)
       let tbody = document.createElement("tbody");
+      tbody.id = "tbody-" + entity.id;
 
       for (let rowIndex = 0; rowIndex < entity.data.length; rowIndex++) {
         let item = entity.data[rowIndex];
-        let tr = document.createElement("tr");
-
-        for (let colIndex = 0; colIndex < entity.columns.length; colIndex++) {
-          let colKey = entity.columns[colIndex].key;
-          let cellValue = item[colKey];
-          let td = document.createElement("td");
-
-          if (colKey === "onVacation" || colKey === "hasDelivery") {
-            let badge = document.createElement("span");
-            let isYes = cellValue === "Так";
-            badge.className = isYes ? "badge badge-yes" : "badge badge-no";
-            badge.textContent = cellValue;
-            td.appendChild(badge);
-          } else if (colKey === "price") {
-            td.className = "price-cell";
-            td.textContent = cellValue;
-          } else {
-            td.textContent = cellValue;
-          }
-
-          tr.appendChild(td);
-        }
-
+        let tr = createTableRow(entity, item);
         tbody.appendChild(tr);
       }
 
@@ -363,8 +582,18 @@
       return tableWrapper;
     }
 
+    // Оновлення тексту кнопки відкриття форми відповідно до активного таба
+    function updateAddButtonLabel() {
+      let entity = getEntityById(activeEntityId);
+      let openModalBtn = document.getElementById("open-modal-btn");
+      if (entity && openModalBtn) {
+        openModalBtn.textContent = "+ Додати (" + entity.title + ")";
+      }
+    }
+
     // Функція перемикання активного таба
     function activateTab(targetId) {
+      activeEntityId = targetId;
       let tabButtons = document.querySelectorAll(".tab-btn");
       let tabPanels = document.querySelectorAll(".tab-panel");
 
@@ -380,6 +609,140 @@
         let isCurrentPanel = panel.id === "panel-" + targetId;
         panel.classList.toggle("active", isCurrentPanel);
       }
+
+      updateAddButtonLabel();
+    }
+
+    // Генерація полів форми у попапі згідно зі структурою активної сутності
+    function renderModalFormFields(entity) {
+      let fieldsContainer = document.getElementById("form-fields-container");
+      let modalTitle = document.getElementById("modal-title");
+      let errorMsg = document.getElementById("form-error-msg");
+
+      fieldsContainer.innerHTML = "";
+      errorMsg.classList.remove("visible");
+      modalTitle.textContent = "Додати запис: «" + entity.title + "»";
+
+      for (let i = 0; i < entity.columns.length; i++) {
+        let col = entity.columns[i];
+        let group = document.createElement("div");
+        group.className = "form-group";
+
+        let fieldId = "field-" + entity.id + "-" + col.key;
+        let label = document.createElement("label");
+        label.setAttribute("for", fieldId);
+        label.textContent = col.label;
+        group.appendChild(label);
+
+        let inputElement = null;
+
+        if (col.type === "select" && col.options) {
+          inputElement = document.createElement("select");
+          inputElement.className = "form-control";
+          inputElement.id = fieldId;
+          inputElement.name = col.key;
+
+          for (let optIdx = 0; optIdx < col.options.length; optIdx++) {
+            let option = document.createElement("option");
+            option.value = col.options[optIdx];
+            option.textContent = col.options[optIdx];
+            inputElement.appendChild(option);
+          }
+        } else {
+          inputElement = document.createElement("input");
+          inputElement.type = "text";
+          inputElement.className = "form-control";
+          inputElement.id = fieldId;
+          inputElement.name = col.key;
+          inputElement.placeholder = col.placeholder || "";
+        }
+
+        group.appendChild(inputElement);
+        fieldsContainer.appendChild(group);
+      }
+    }
+
+    // Відкриття попапу з формою
+    function openAddModal() {
+      let entity = getEntityById(activeEntityId);
+      if (!entity) {
+        return;
+      }
+
+      renderModalFormFields(entity);
+
+      let overlay = document.getElementById("add-modal-overlay");
+      overlay.classList.add("open");
+
+      let firstInput = overlay.querySelector(".form-control");
+      if (firstInput) {
+        firstInput.focus();
+      }
+    }
+
+    // Закриття попапу з формою
+    function closeAddModal() {
+      let overlay = document.getElementById("add-modal-overlay");
+      overlay.classList.remove("open");
+    }
+
+    // Обробка відправки форми та додавання нового рядка у таблицю
+    function handleFormSubmit(event) {
+      event.preventDefault();
+
+      let entity = getEntityById(activeEntityId);
+      if (!entity) {
+        return;
+      }
+
+      let newRecord = {};
+      let isFormValid = true;
+
+      for (let i = 0; i < entity.columns.length; i++) {
+        let col = entity.columns[i];
+        let fieldId = "field-" + entity.id + "-" + col.key;
+        let fieldElement = document.getElementById(fieldId);
+        let value = fieldElement ? fieldElement.value.trim() : "";
+
+        if (value === "") {
+          isFormValid = false;
+        }
+
+        if (col.key === "price" && value !== "" && value.indexOf("грн") === -1) {
+          value = value + " грн";
+        }
+
+        newRecord[col.key] = value;
+      }
+
+      let errorMsg = document.getElementById("form-error-msg");
+      if (!isFormValid) {
+        errorMsg.classList.add("visible");
+        return;
+      }
+
+      errorMsg.classList.remove("visible");
+
+      // Додаємо новий об'єкт у масив даних сутності
+      entity.data.push(newRecord);
+
+      // Додаємо новий рядок у відповідну таблицю в DOM
+      let tbody = document.getElementById("tbody-" + entity.id);
+      if (tbody) {
+        let newRow = createTableRow(entity, newRecord);
+        tbody.appendChild(newRow);
+      }
+
+      // Оновлюємо лічильник записів на кнопці таба
+      let tabButtons = document.querySelectorAll(".tab-btn");
+      for (let j = 0; j < tabButtons.length; j++) {
+        let btn = tabButtons[j];
+        if (btn.getAttribute("data-tab") === entity.id) {
+          btn.textContent = entity.title + " (" + entity.data.length + ")";
+        }
+      }
+
+      closeAddModal();
     }
 
     // Ініціалізація та рендеринг усіх табів і таблиць на сторінці
@@ -418,6 +781,27 @@
 
         tablesContainer.appendChild(panel);
       }
+
+      updateAddButtonLabel();
+
+      // Прив'язка обробників подій для модального вікна та форми
+      let openModalBtn = document.getElementById("open-modal-btn");
+      let closeModalBtn = document.getElementById("close-modal-btn");
+      let cancelModalBtn = document.getElementById("cancel-modal-btn");
+      let modalOverlay = document.getElementById("add-modal-overlay");
+      let entityForm = document.getElementById("entity-form");
+
+      openModalBtn.addEventListener("click", openAddModal);
+      closeModalBtn.addEventListener("click", closeAddModal);
+      cancelModalBtn.addEventListener("click", closeAddModal);
+
+      modalOverlay.addEventListener("click", function (event) {
+        if (event.target === modalOverlay) {
+          closeAddModal();
+        }
+      });
+
+      entityForm.addEventListener("submit", handleFormSubmit);
     }
 
     document.addEventListener("DOMContentLoaded", initApp);
