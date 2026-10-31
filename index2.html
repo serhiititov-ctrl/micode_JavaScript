@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Магазини автозапчастин</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background-color: #f4f6f9;
+      color: #222;
+      padding: 24px 16px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border: 1px solid #dce1e7;
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .header-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 22px;
+      color: #1a2533;
+    }
+
+    .top-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 2px solid #e2e7ee;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+
+    .tabs-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      padding: 9px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #3b4859;
+      background-color: #eef1f6;
+      border: 1px solid #d0d7e2;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .tab-btn:hover {
+      background-color: #e1e7f0;
+    }
+
+    .tab-btn.active {
+      background-color: #1d5bbf;
+      color: #ffffff;
+      border-color: #1d5bbf;
+    }
+
+    .add-btn {
+      padding: 9px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffffff;
+      background-color: #1f7a3f;
+      border: 1px solid #1f7a3f;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .add-btn:hover {
+      background-color: #186332;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 11px 14px;
+      text-align: left;
+      border: 1px solid #dde2e9;
+    }
+
+    th {
+      background-color: #f0f4f8;
+      color: #1a2533;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #fafbfc;
+    }
+
+    tbody tr:hover {
+      background-color: #eef4fc;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 9px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 12px;
+    }
+
+    .badge-yes {
+      background-color: #e3f5e8;
+      color: #186a32;
+    }
+
+    .badge-no {
+      background-color: #f2f4f7;
+      color: #4a5568;
+    }
+
+    .price-cell {
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Стилі модального вікна (попапу) */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(18, 26, 38, 0.55);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 1000;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-window {
+      background-color: #ffffff;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 480px;
+      border: 1px solid #dce1e7;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background-color: #f0f4f8;
+      border-bottom: 1px solid #dde2e9;
+    }
+
+    .modal-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #1a2533;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      line-height: 1;
+      color: #5c6877;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .modal-close:hover {
+      background-color: #e2e7ee;
+      color: #1a2533;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 5px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 9px 12px;
+      font-size: 14px;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      color: #222;
+      background-color: #fff;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #1d5bbf;
+      box-shadow: 0 0 0 2px rgba(29, 91, 191, 0.15);
+    }
+
+    .form-error {
+      display: none;
+      margin-top: 8px;
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #b91c1c;
+      background-color: #fef2f2;
+      border: 1px solid #f87171;
+      border-radius: 6px;
+    }
+
+    .form-error.visible {
+      display: block;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid #eef1f6;
+    }
+
+    .btn-cancel {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #3b4859;
+      background-color: #eef1f6;
+      border: 1px solid #d0d7e2;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-cancel:hover {
+      background-color: #e1e7f0;
+    }
+
+    .btn-submit {
+      padding: 8px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffffff;
+      background-color: #1d5bbf;
+      border: 1px solid #1d5bbf;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-submit:hover {
+      background-color: #164694;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header-bar">
+      <h1>Мережа магазинів автозапчастин</h1>
+    </div>
+
+    <div class="top-controls">
+      <div class="tabs-nav" id="tabs-nav" role="tablist"></div>
+      <button type="button" class="add-btn" id="open-modal-btn">+ Додати</button>
+    </div>
+
+    <div id="tables-container"></div>
+  </div>
+
+  <!-- Попап з динамічною формою додавання -->
+  <div class="modal-overlay" id="add-modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Додати запис</h2>
+        <button type="button" class="modal-close" id="close-modal-btn" aria-label="Закрити">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="entity-form" novalidate>
+          <div id="form-fields-container"></div>
+          <div class="form-error" id="form-error-msg">Будь ласка, заповніть усі поля форми.</div>
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" id="cancel-modal-btn">Скасувати</button>
+            <button type="submit" class="btn-submit" id="submit-form-btn">Зберегти у таблицю</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Дані сутності «Запчастини»
+    let partsData = [
+      {
+        code: "AP-1042",
+        name: "Гальмівні колодки передні",
+        model: "Bosch BP1420 (VW Golf VII)",
+        price: "1 650 грн",
+        storeAddress: "м. Київ, вул. Велика Васильківська, 114"
+      },
+      {
+        code: "AP-2085",
+        name: "Масляний фільтр двигуна",
+        model: "Mann-Filter W 712/95 (Skoda Octavia A7)",
+        price: "420 грн",
+        storeAddress: "м. Харків, просп. Науки, 48"
+      },
+      {
+        code: "AP-3110",
+        name: "Амортизатор передній газомасляний",
+        model: "KYB Excel-G 339700 (Toyota Corolla E180)",
+        price: "2 980 грн",
+        storeAddress: "м. Львів, вул. Городоцька, 172"
+      },
+      {
+        code: "AP-4502",
+        name: "Комплект ременя ГРМ з помпою",
+        model: "ContiTech CT1139WP6 (Renault Megane III)",
+        price: "4 850 грн",
+        storeAddress: "м. Київ, вул. Велика Васильківська, 114"
+      },
+      {
+        code: "AP-5190",
+        name: "Свічка запалювання іридієва",
+        model: "NGK Laser Iridium ILZKR7B11 (Honda CR-V)",
+        price: "690 грн",
+        storeAddress: "м. Дніпро, просп. Богдана Хмельницького, 31"
+      },
+      {
+        code: "AP-6324",
+        name: "Акумулятор автомобільний 60Ah",
+        model: "Varta Blue Dynamic D24 (Універсальний)",
+        price: "3 400 грн",
+        storeAddress: "м. Харків, просп. Науки, 48"
+      }
+    ];
+
+    // Дані сутності «Співробітники»
+    let employeesData = [
+      {
+        fullName: "Коваленко Олександр Петрович",
+        position: "Продавець-консультант",
+        hireDate: "15.03.2021",
+        onVacation: "Ні",
+        storeAddress: "м. Київ, вул. Велика Васильківська, 114"
+      },
+      {
+        fullName: "Мельник Ірина Василівна",
+        position: "Бухгалтер",
+        hireDate: "02.08.2020",
+        onVacation: "Так",
+        storeAddress: "м. Київ, вул. Велика Васильківська, 114"
+      },
+      {
+        fullName: "Шевченко Дмитро Сергійович",
+        position: "Касир",
+        hireDate: "10.01.2023",
+        onVacation: "Ні",
+        storeAddress: "м. Харків, просп. Науки, 48"
+      },
+      {
+        fullName: "Бондаренко Тарас Миколайович",
+        position: "Охоронець",
+        hireDate: "24.05.2022",
+        onVacation: "Ні",
+        storeAddress: "м. Харків, просп. Науки, 48"
+      },
+      {
+        fullName: "Савченко Наталія Ігорівна",
+        position: "Продавець-консультант",
+        hireDate: "19.11.2021",
+        onVacation: "Так",
+        storeAddress: "м. Львів, вул. Городоцька, 172"
+      },
+      {
+        fullName: "Ткаченко Віктор Андрійович",
+        position: "Касир",
+        hireDate: "05.09.2023",
+        onVacation: "Ні",
+        storeAddress: "м. Дніпро, просп. Богдана Хмельницького, 31"
+      }
+    ];
+
+    // Дані сутності «Магазини»
+    let storesData = [
+      {
+        name: "АвтоДім Центральний",
+        storeAddress: "м. Київ, вул. Велика Васильківська, 114",
+        workingHours: "Пн–Сб: 08:30–20:00, Нд: 09:00–18:00",
+        hasDelivery: "Так"
+      },
+      {
+        name: "МоторМаркет Наукова",
+        storeAddress: "м. Харків, просп. Науки, 48",
+        workingHours: "Пн–Сб: 09:00–19:00, Нд: вихідний",
+        hasDelivery: "Так"
+      },
+      {
+        name: "ЗахідАвтоЗапчастини",
+        storeAddress: "м. Львів, вул. Городоцька, 172",
+        workingHours: "Пн–Пт: 09:00–19:30, Сб: 09:00–17:00",
+        hasDelivery: "Ні"
+      },
+      {
+        name: "ДніпроАвтоСклад",
+        storeAddress: "м. Дніпро, просп. Богдана Хмельницького, 31",
+        workingHours: "Пн–Сб: 08:00–19:00, Нд: 09:00–16:00",
+        hasDelivery: "Так"
+      }
+    ];
+
+    // Конфігурація сутностей, колонок таблиць і полів форми
+    let entitiesConfig = [
+      {
+        id: "parts",
+        title: "Запчастини",
+        columns: [
+          { key: "code", label: "Код товару", type: "text", placeholder: "Напр., AP-7015" },
+          { key: "name", label: "Назва", type: "text", placeholder: "Напр., Диск гальмівний" },
+          { key: "model", label: "Модель", type: "text", placeholder: "Напр., Brembo 09.9772.11" },
+          { key: "price", label: "Ціна", type: "text", placeholder: "Напр., 2 150 грн" },
+          { key: "storeAddress", label: "Адреса магазина", type: "text", placeholder: "Напр., м. Київ, вул. Велика Васильківська, 114" }
+        ],
+        data: partsData
+      },
+      {
+        id: "employees",
+        title: "Співробітники",
+        columns: [
+          { key: "fullName", label: "ПІБ", type: "text", placeholder: "Прізвище Ім'я По батькові" },
+          { key: "position", label: "Посада", type: "text", placeholder: "Напр., Продавець, Бухгалтер, Касир, Охоронець" },
+          { key: "hireDate", label: "Дата найму", type: "text", placeholder: "ДД.ММ.РРРР (напр., 12.04.2024)" },
+          { key: "onVacation", label: "Відпустка", type: "select", options: ["Ні", "Так"] },
+          { key: "storeAddress", label: "Адреса магазина", type: "text", placeholder: "Напр., м. Харків, просп. Науки, 48" }
+        ],
+        data: employeesData
+      },
+      {
+        id: "stores",
+        title: "Магазини",
+        columns: [
+          { key: "name", label: "Назва", type: "text", placeholder: "Напр., АвтоМастер Схід" },
+          { key: "storeAddress", label: "Адреса магазина", type: "text", placeholder: "Напр., м. Одеса, вул. Приморська, 22" },
+          { key: "workingHours", label: "Час роботи", type: "text", placeholder: "Напр., Пн–Сб: 09:00–19:00" },
+          { key: "hasDelivery", label: "Наявність доставки", type: "select", options: ["Так", "Ні"] }
+        ],
+        data: storesData
+      }
+    ];
+
+    // Змінна для відстеження поточного активного таба
+    let activeEntityId = entitiesConfig[0].id;
+
+    // Допоміжна функція пошуку конфігурації сутності за її id
+    function getEntityById(entityId) {
+      for (let i = 0; i < entitiesConfig.length; i++) {
+        if (entitiesConfig[i].id === entityId) {
+          return entitiesConfig[i];
+        }
+      }
+      return null;
+    }
+
+    // Створення одного рядка таблиці (tr) для запису сутності
+    function createTableRow(entity, item) {
+      let tr = document.createElement("tr");
+
+      for (let colIndex = 0; colIndex < entity.columns.length; colIndex++) {
+        let colKey = entity.columns[colIndex].key;
+        let cellValue = item[colKey];
+        let td = document.createElement("td");
+
+        if (colKey === "onVacation" || colKey === "hasDelivery") {
+          let badge = document.createElement("span");
+          let isYes = cellValue === "Так";
+          badge.className = isYes ? "badge badge-yes" : "badge badge-no";
+          badge.textContent = cellValue;
+          td.appendChild(badge);
+        } else if (colKey === "price") {
+          td.className = "price-cell";
+          td.textContent = cellValue;
+        } else {
+          td.textContent = cellValue;
+        }
+
+        tr.appendChild(td);
+      }
+
+      return tr;
+    }
+
+    // Функція створення HTML-таблиці для конкретної сутності
+    function createEntityTable(entity) {
+      let tableWrapper = document.createElement("div");
+      tableWrapper.className = "table-wrapper";
+
+      let table = document.createElement("table");
+      table.id = "table-" + entity.id;
+
+      // Створення заголовка таблиці (thead)
+      let thead = document.createElement("thead");
+      let headerRow = document.createElement("tr");
+
+      for (let i = 0; i < entity.columns.length; i++) {
+        let col = entity.columns[i];
+        let th = document.createElement("th");
+        th.textContent = col.label;
+        headerRow.appendChild(th);
+      }
+
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      // Створення тіла таблиці (tbody)
+      let tbody = document.createElement("tbody");
+      tbody.id = "tbody-" + entity.id;
+
+      for (let rowIndex = 0; rowIndex < entity.data.length; rowIndex++) {
+        let item = entity.data[rowIndex];
+        let tr = createTableRow(entity, item);
+        tbody.appendChild(tr);
+      }
+
+      table.appendChild(tbody);
+      tableWrapper.appendChild(table);
+
+      return tableWrapper;
+    }
+
+    // Оновлення тексту кнопки відкриття форми відповідно до активного таба
+    function updateAddButtonLabel() {
+      let entity = getEntityById(activeEntityId);
+      let openModalBtn = document.getElementById("open-modal-btn");
+      if (entity && openModalBtn) {
+        openModalBtn.textContent = "+ Додати (" + entity.title + ")";
+      }
+    }
+
+    // Функція перемикання активного таба
+    function activateTab(targetId) {
+      activeEntityId = targetId;
+      let tabButtons = document.querySelectorAll(".tab-btn");
+      let tabPanels = document.querySelectorAll(".tab-panel");
+
+      for (let i = 0; i < tabButtons.length; i++) {
+        let btn = tabButtons[i];
+        let isCurrent = btn.getAttribute("data-tab") === targetId;
+        btn.classList.toggle("active", isCurrent);
+        btn.setAttribute("aria-selected", isCurrent ? "true" : "false");
+      }
+
+      for (let j = 0; j < tabPanels.length; j++) {
+        let panel = tabPanels[j];
+        let isCurrentPanel = panel.id === "panel-" + targetId;
+        panel.classList.toggle("active", isCurrentPanel);
+      }
+
+      updateAddButtonLabel();
+    }
+
+    // Генерація полів форми у попапі згідно зі структурою активної сутності
+    function renderModalFormFields(entity) {
+      let fieldsContainer = document.getElementById("form-fields-container");
+      let modalTitle = document.getElementById("modal-title");
+      let errorMsg = document.getElementById("form-error-msg");
+
+      fieldsContainer.innerHTML = "";
+      errorMsg.classList.remove("visible");
+      modalTitle.textContent = "Додати запис: «" + entity.title + "»";
+
+      for (let i = 0; i < entity.columns.length; i++) {
+        let col = entity.columns[i];
+        let group = document.createElement("div");
+        group.className = "form-group";
+
+        let fieldId = "field-" + entity.id + "-" + col.key;
+        let label = document.createElement("label");
+        label.setAttribute("for", fieldId);
+        label.textContent = col.label;
+        group.appendChild(label);
+
+        let inputElement = null;
+
+        if (col.type === "select" && col.options) {
+          inputElement = document.createElement("select");
+          inputElement.className = "form-control";
+          inputElement.id = fieldId;
+          inputElement.name = col.key;
+
+          for (let optIdx = 0; optIdx < col.options.length; optIdx++) {
+            let option = document.createElement("option");
+            option.value = col.options[optIdx];
+            option.textContent = col.options[optIdx];
+            inputElement.appendChild(option);
+          }
+        } else {
+          inputElement = document.createElement("input");
+          inputElement.type = "text";
+          inputElement.className = "form-control";
+          inputElement.id = fieldId;
+          inputElement.name = col.key;
+          inputElement.placeholder = col.placeholder || "";
+        }
+
+        group.appendChild(inputElement);
+        fieldsContainer.appendChild(group);
+      }
+    }
+
+    // Відкриття попапу з формою
+    function openAddModal() {
+      let entity = getEntityById(activeEntityId);
+      if (!entity) {
+        return;
+      }
+
+      renderModalFormFields(entity);
+
+      let overlay = document.getElementById("add-modal-overlay");
+      overlay.classList.add("open");
+
+      let firstInput = overlay.querySelector(".form-control");
+      if (firstInput) {
+        firstInput.focus();
+      }
+    }
+
+    // Закриття попапу з формою
+    function closeAddModal() {
+      let overlay = document.getElementById("add-modal-overlay");
+      overlay.classList.remove("open");
+    }
+
+    // Обробка відправки форми та додавання нового рядка у таблицю
+    function handleFormSubmit(event) {
+      event.preventDefault();
+
+      let entity = getEntityById(activeEntityId);
+      if (!entity) {
+        return;
+      }
+
+      let newRecord = {};
+      let isFormValid = true;
+
+      for (let i = 0; i < entity.columns.length; i++) {
+        let col = entity.columns[i];
+        let fieldId = "field-" + entity.id + "-" + col.key;
+        let fieldElement = document.getElementById(fieldId);
+        let value = fieldElement ? fieldElement.value.trim() : "";
+
+        if (value === "") {
+          isFormValid = false;
+        }
+
+        if (col.key === "price" && value !== "" && value.indexOf("грн") === -1) {
+          value = value + " грн";
+        }
+
+        newRecord[col.key] = value;
+      }
+
+      let errorMsg = document.getElementById("form-error-msg");
+      if (!isFormValid) {
+        errorMsg.classList.add("visible");
+        return;
+      }
+
+      errorMsg.classList.remove("visible");
+
+      // Додаємо новий об'єкт у масив даних сутності
+      entity.data.push(newRecord);
+
+      // Додаємо новий рядок у відповідну таблицю в DOM
+      let tbody = document.getElementById("tbody-" + entity.id);
+      if (tbody) {
+        let newRow = createTableRow(entity, newRecord);
+        tbody.appendChild(newRow);
+      }
+
+      // Оновлюємо лічильник записів на кнопці таба
+      let tabButtons = document.querySelectorAll(".tab-btn");
+      for (let j = 0; j < tabButtons.length; j++) {
+        let btn = tabButtons[j];
+        if (btn.getAttribute("data-tab") === entity.id) {
+          btn.textContent = entity.title + " (" + entity.data.length + ")";
+        }
+      }
+
+      closeAddModal();
+    }
+
+    // Ініціалізація та рендеринг усіх табів і таблиць на сторінці
+    function initApp() {
+      let tabsNav = document.getElementById("tabs-nav");
+      let tablesContainer = document.getElementById("tables-container");
+
+      for (let i = 0; i < entitiesConfig.length; i++) {
+        let entity = entitiesConfig[i];
+        let isFirst = i === 0;
+
+        // Створення кнопки таба
+        let tabButton = document.createElement("button");
+        tabButton.type = "button";
+        tabButton.className = isFirst ? "tab-btn active" : "tab-btn";
+        tabButton.setAttribute("data-tab", entity.id);
+        tabButton.setAttribute("role", "tab");
+        tabButton.setAttribute("aria-selected", isFirst ? "true" : "false");
+        tabButton.textContent = entity.title + " (" + entity.data.length + ")";
+
+        tabButton.addEventListener("click", function () {
+          let selectedTabId = this.getAttribute("data-tab");
+          activateTab(selectedTabId);
+        });
+
+        tabsNav.appendChild(tabButton);
+
+        // Створення панелі з таблицею
+        let panel = document.createElement("div");
+        panel.id = "panel-" + entity.id;
+        panel.className = isFirst ? "tab-panel active" : "tab-panel";
+        panel.setAttribute("role", "tabpanel");
+
+        let renderedTable = createEntityTable(entity);
+        panel.appendChild(renderedTable);
+
+        tablesContainer.appendChild(panel);
+      }
+
+      updateAddButtonLabel();
+
+      // Прив'язка обробників подій для модального вікна та форми
+      let openModalBtn = document.getElementById("open-modal-btn");
+      let closeModalBtn = document.getElementById("close-modal-btn");
+      let cancelModalBtn = document.getElementById("cancel-modal-btn");
+      let modalOverlay = document.getElementById("add-modal-overlay");
+      let entityForm = document.getElementById("entity-form");
+
+      openModalBtn.addEventListener("click", openAddModal);
+      closeModalBtn.addEventListener("click", closeAddModal);
+      cancelModalBtn.addEventListener("click", closeAddModal);
+
+      modalOverlay.addEventListener("click", function (event) {
+        if (event.target === modalOverlay) {
+          closeAddModal();
+        }
+      });
+
+      entityForm.addEventListener("submit", handleFormSubmit);
+    }
+
+    document.addEventListener("DOMContentLoaded", initApp);
+  </script>
+</body>
+</html>
