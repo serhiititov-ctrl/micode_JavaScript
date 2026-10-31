@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Магазини автозапчастин</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background-color: #f4f6f9;
+      color: #222;
+      padding: 24px 16px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border: 1px solid #dce1e7;
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 6px;
+      color: #1a2533;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #5c6877;
+      margin-bottom: 20px;
+    }
+
+    .tabs-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 2px solid #e2e7ee;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      padding: 9px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #3b4859;
+      background-color: #eef1f6;
+      border: 1px solid #d0d7e2;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .tab-btn:hover {
+      background-color: #e1e7f0;
+    }
+
+    .tab-btn.active {
+      background-color: #1d5bbf;
+      color: #ffffff;
+      border-color: #1d5bbf;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 11px 14px;
+      text-align: left;
+      border: 1px solid #dde2e9;
+    }
+
+    th {
+      background-color: #f0f4f8;
+      color: #1a2533;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #fafbfc;
+    }
+
+    tbody tr:hover {
+      background-color: #eef4fc;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 9px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 12px;
+    }
+
+    .badge-yes {
+      background-color: #e3f5e8;
+      color: #186a32;
+    }
+
+    .badge-no {
+      background-color: #f2f4f7;
+      color: #4a5568;
+    }
+
+    .price-cell {
+      font-weight: 600;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Мережа магазинів автозапчастин</h1>
+   
+    <div class="tabs-nav" id="tabs-nav" role="tablist"></div>
+    <div id="tables-container"></div>
+  </div>
+
+  <script>
+    // Дані сутності «Запчастини»
+    let partsData = [
+      {
+        code: "AP-1042",
+        name: "Гальмівні колодки передні",
+        model: "Bosch BP1420 (VW Golf VII)",
+        price: "1 650 грн",
+        storeAddress: "м. Київ, вул. Велика Васильківська, 114"
+      },
+      {
+        code: "AP-2085",
+        name: "Масляний фільтр двигуна",
+        model: "Mann-Filter W 712/95 (Skoda Octavia A7)",
+        price: "420 грн",
+        storeAddress: "м. Харків, просп. Науки, 48"
+      },
+      {
+        code: "AP-3110",
+        name: "Амортизатор передній газомасляний",
+        model: "KYB Excel-G 339700 (Toyota Corolla E180)",
+        price: "2 980 грн",
+        storeAddress: "м. Львів, вул. Городоцька, 172"
+      },
+      {
+        code: "AP-4502",
+        name: "Комплект ременя ГРМ з помпою",
+        model: "ContiTech CT1139WP6 (Renault Megane III)",
+        price: "4 850 грн",
+        storeAddress: "м. Київ, вул. Велика Васильківська, 114"
+      },
+      {
+        code: "AP-5190",
+        name: "Свічка запалювання іридієва",
+        model: "NGK Laser Iridium ILZKR7B11 (Honda CR-V)",
+        price: "690 грн",
+        storeAddress: "м. Дніпро, просп. Богдана Хмельницького, 31"
+      },
+      {
+        code: "AP-6324",
+        name: "Акумулятор автомобільний 60Ah",
+        model: "Varta Blue Dynamic D24 (Універсальний)",
+        price: "3 400 грн",
+        storeAddress: "м. Харків, просп. Науки, 48"
+      }
+    ];
+
+    // Дані сутності «Співробітники»
+    let employeesData = [
+      {
+        fullName: "Коваленко Олександр Петрович",
+        position: "Продавець-консультант",
+        hireDate: "15.03.2021",
+        onVacation: "Ні",
+        storeAddress: "м. Київ, вул. Велика Васильківська, 114"
+      },
+      {
+        fullName: "Мельник Ірина Василівна",
+        position: "Бухгалтер",
+        hireDate: "02.08.2020",
+        onVacation: "Так",
+        storeAddress: "м. Київ, вул. Велика Васильківська, 114"
+      },
+      {
+        fullName: "Шевченко Дмитро Сергійович",
+        position: "Касир",
+        hireDate: "10.01.2023",
+        onVacation: "Ні",
+        storeAddress: "м. Харків, просп. Науки, 48"
+      },
+      {
+        fullName: "Бондаренко Тарас Миколайович",
+        position: "Охоронець",
+        hireDate: "24.05.2022",
+        onVacation: "Ні",
+        storeAddress: "м. Харків, просп. Науки, 48"
+      },
+      {
+        fullName: "Савченко Наталія Ігорівна",
+        position: "Продавець-консультант",
+        hireDate: "19.11.2021",
+        onVacation: "Так",
+        storeAddress: "м. Львів, вул. Городоцька, 172"
+      },
+      {
+        fullName: "Ткаченко Віктор Андрійович",
+        position: "Касир",
+        hireDate: "05.09.2023",
+        onVacation: "Ні",
+        storeAddress: "м. Дніпро, просп. Богдана Хмельницького, 31"
+      }
+    ];
+
+    // Дані сутності «Магазини»
+    let storesData = [
+      {
+        name: "АвтоДім Центральний",
+        storeAddress: "м. Київ, вул. Велика Васильківська, 114",
+        workingHours: "Пн–Сб: 08:30–20:00, Нд: 09:00–18:00",
+        hasDelivery: "Так"
+      },
+      {
+        name: "МоторМаркет Наукова",
+        storeAddress: "м. Харків, просп. Науки, 48",
+        workingHours: "Пн–Сб: 09:00–19:00, Нд: вихідний",
+        hasDelivery: "Так"
+      },
+      {
+        name: "ЗахідАвтоЗапчастини",
+        storeAddress: "м. Львів, вул. Городоцька, 172",
+        workingHours: "Пн–Пт: 09:00–19:30, Сб: 09:00–17:00",
+        hasDelivery: "Ні"
+      },
+      {
+        name: "ДніпроАвтоСклад",
+        storeAddress: "м. Дніпро, просп. Богдана Хмельницького, 31",
+        workingHours: "Пн–Сб: 08:00–19:00, Нд: 09:00–16:00",
+        hasDelivery: "Так"
+      }
+    ];
+
+    // Конфігурація сутностей та колонок таблиць
+    let entitiesConfig = [
+      {
+        id: "parts",
+        title: "Запчастини",
+        columns: [
+          { key: "code", label: "Код товару" },
+          { key: "name", label: "Назва" },
+          { key: "model", label: "Модель" },
+          { key: "price", label: "Ціна" },
+          { key: "storeAddress", label: "Адреса магазина" }
+        ],
+        data: partsData
+      },
+      {
+        id: "employees",
+        title: "Співробітники",
+        columns: [
+          { key: "fullName", label: "ПІБ" },
+          { key: "position", label: "Посада" },
+          { key: "hireDate", label: "Дата найму" },
+          { key: "onVacation", label: "Відпустка" },
+          { key: "storeAddress", label: "Адреса магазина" }
+        ],
+        data: employeesData
+      },
+      {
+        id: "stores",
+        title: "Магазини",
+        columns: [
+          { key: "name", label: "Назва" },
+          { key: "storeAddress", label: "Адреса магазина" },
+          { key: "workingHours", label: "Час роботи" },
+          { key: "hasDelivery", label: "Наявність доставки" }
+        ],
+        data: storesData
+      }
+    ];
+
+    // Функція створення HTML-таблиці для конкретної сутності
+    function createEntityTable(entity) {
+      let tableWrapper = document.createElement("div");
+      tableWrapper.className = "table-wrapper";
+
+      let table = document.createElement("table");
+      table.id = "table-" + entity.id;
+
+      // Створення заголовка таблиці (thead)
+      let thead = document.createElement("thead");
+      let headerRow = document.createElement("tr");
+
+      for (let i = 0; i < entity.columns.length; i++) {
+        let col = entity.columns[i];
+        let th = document.createElement("th");
+        th.textContent = col.label;
+        headerRow.appendChild(th);
+      }
+
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      // Створення тіла таблиці (tbody)
+      let tbody = document.createElement("tbody");
+
+      for (let rowIndex = 0; rowIndex < entity.data.length; rowIndex++) {
+        let item = entity.data[rowIndex];
+        let tr = document.createElement("tr");
+
+        for (let colIndex = 0; colIndex < entity.columns.length; colIndex++) {
+          let colKey = entity.columns[colIndex].key;
+          let cellValue = item[colKey];
+          let td = document.createElement("td");
+
+          if (colKey === "onVacation" || colKey === "hasDelivery") {
+            let badge = document.createElement("span");
+            let isYes = cellValue === "Так";
+            badge.className = isYes ? "badge badge-yes" : "badge badge-no";
+            badge.textContent = cellValue;
+            td.appendChild(badge);
+          } else if (colKey === "price") {
+            td.className = "price-cell";
+            td.textContent = cellValue;
+          } else {
+            td.textContent = cellValue;
+          }
+
+          tr.appendChild(td);
+        }
+
+        tbody.appendChild(tr);
+      }
+
+      table.appendChild(tbody);
+      tableWrapper.appendChild(table);
+
+      return tableWrapper;
+    }
+
+    // Функція перемикання активного таба
+    function activateTab(targetId) {
+      let tabButtons = document.querySelectorAll(".tab-btn");
+      let tabPanels = document.querySelectorAll(".tab-panel");
+
+      for (let i = 0; i < tabButtons.length; i++) {
+        let btn = tabButtons[i];
+        let isCurrent = btn.getAttribute("data-tab") === targetId;
+        btn.classList.toggle("active", isCurrent);
+        btn.setAttribute("aria-selected", isCurrent ? "true" : "false");
+      }
+
+      for (let j = 0; j < tabPanels.length; j++) {
+        let panel = tabPanels[j];
+        let isCurrentPanel = panel.id === "panel-" + targetId;
+        panel.classList.toggle("active", isCurrentPanel);
+      }
+    }
+
+    // Ініціалізація та рендеринг усіх табів і таблиць на сторінці
+    function initApp() {
+      let tabsNav = document.getElementById("tabs-nav");
+      let tablesContainer = document.getElementById("tables-container");
+
+      for (let i = 0; i < entitiesConfig.length; i++) {
+        let entity = entitiesConfig[i];
+        let isFirst = i === 0;
+
+        // Створення кнопки таба
+        let tabButton = document.createElement("button");
+        tabButton.type = "button";
+        tabButton.className = isFirst ? "tab-btn active" : "tab-btn";
+        tabButton.setAttribute("data-tab", entity.id);
+        tabButton.setAttribute("role", "tab");
+        tabButton.setAttribute("aria-selected", isFirst ? "true" : "false");
+        tabButton.textContent = entity.title + " (" + entity.data.length + ")";
+
+        tabButton.addEventListener("click", function () {
+          let selectedTabId = this.getAttribute("data-tab");
+          activateTab(selectedTabId);
+        });
+
+        tabsNav.appendChild(tabButton);
+
+        // Створення панелі з таблицею
+        let panel = document.createElement("div");
+        panel.id = "panel-" + entity.id;
+        panel.className = isFirst ? "tab-panel active" : "tab-panel";
+        panel.setAttribute("role", "tabpanel");
+
+        let renderedTable = createEntityTable(entity);
+        panel.appendChild(renderedTable);
+
+        tablesContainer.appendChild(panel);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", initApp);
+  </script>
+</body>
+</html>
