@@ -20,7 +20,7 @@
     }
 
     .container {
-      max-width: 1040px;
+      max-width: 1080px;
       margin: 0 auto;
       background-color: #ffffff;
       border: 1px solid #dce1e7;
@@ -35,12 +35,18 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 6px;
     }
 
     h1 {
       font-size: 22px;
       color: #1a2533;
+    }
+
+    .hint-text {
+      font-size: 13px;
+      color: #5c6877;
+      margin-bottom: 16px;
     }
 
     .top-controls {
@@ -118,9 +124,10 @@
     }
 
     th, td {
-      padding: 11px 14px;
+      padding: 10px 14px;
       text-align: left;
       border: 1px solid #dde2e9;
+      vertical-align: middle;
     }
 
     th {
@@ -130,12 +137,96 @@
       white-space: nowrap;
     }
 
+    th.action-col,
+    td.action-cell {
+      width: 56px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
     tbody tr:nth-child(even) {
       background-color: #fafbfc;
     }
 
     tbody tr:hover {
       background-color: #eef4fc;
+    }
+
+    td.editable-cell {
+      cursor: pointer;
+      position: relative;
+      transition: background-color 0.12s ease;
+    }
+
+    td.editable-cell:hover {
+      background-color: #e3edf9;
+    }
+
+    td.editable-cell.editing {
+      padding: 6px 8px;
+      background-color: #ffffff;
+      cursor: default;
+    }
+
+    .inline-edit-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .inline-input {
+      flex: 1;
+      min-width: 110px;
+      padding: 5px 8px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #1a2533;
+      background-color: #ffffff;
+      border: 1px solid #1d5bbf;
+      border-radius: 4px;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(29, 91, 191, 0.15);
+    }
+
+    .inline-save-btn {
+      padding: 5px 9px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #ffffff;
+      background-color: #1d5bbf;
+      border: 1px solid #1d5bbf;
+      border-radius: 4px;
+      cursor: pointer;
+      line-height: 1.2;
+      flex-shrink: 0;
+    }
+
+    .inline-save-btn:hover {
+      background-color: #164694;
+    }
+
+    .delete-row-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1;
+      color: #c53030;
+      background-color: #fff5f5;
+      border: 1px solid #feb2b2;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .delete-row-btn:hover {
+      background-color: #e53e3e;
+      color: #ffffff;
+      border-color: #e53e3e;
     }
 
     .badge {
@@ -161,7 +252,7 @@
       white-space: nowrap;
     }
 
-    /* Стилі модального вікна (попапу) */
+    /* Стилі модальних вікон (попапів) */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -199,10 +290,19 @@
       border-bottom: 1px solid #dde2e9;
     }
 
+    .modal-header.error-header {
+      background-color: #fef2f2;
+      border-bottom-color: #fecaca;
+    }
+
     .modal-title {
       font-size: 17px;
       font-weight: 600;
       color: #1a2533;
+    }
+
+    .modal-header.error-header .modal-title {
+      color: #991b1b;
     }
 
     .modal-close {
@@ -223,6 +323,30 @@
 
     .modal-body {
       padding: 20px;
+    }
+
+    .error-modal-text {
+      font-size: 14px;
+      color: #2d3748;
+      margin-bottom: 12px;
+    }
+
+    .error-details-list {
+      margin: 10px 0 4px 18px;
+      font-size: 13px;
+      color: #7f1d1d;
+      background-color: #fff5f5;
+      border: 1px solid #fed7d7;
+      border-radius: 6px;
+      padding: 10px 14px 10px 28px;
+    }
+
+    .error-details-list li {
+      margin-bottom: 4px;
+    }
+
+    .error-details-list li:last-child {
+      margin-bottom: 0;
     }
 
     .form-group {
@@ -314,7 +438,7 @@
     <div class="header-bar">
       <h1>Мережа магазинів автозапчастин</h1>
     </div>
-
+    
     <div class="top-controls">
       <div class="tabs-nav" id="tabs-nav" role="tablist"></div>
       <button type="button" class="add-btn" id="open-modal-btn">+ Додати</button>
@@ -339,6 +463,23 @@
             <button type="submit" class="btn-submit" id="submit-form-btn">Зберегти у таблицю</button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Попап помилки видалення пов'язаних даних -->
+  <div class="modal-overlay" id="error-modal-overlay" role="alertdialog" aria-modal="true">
+    <div class="modal-window">
+      <div class="modal-header error-header">
+        <h2 class="modal-title" id="error-modal-title">Неможливо видалити запис</h2>
+        <button type="button" class="modal-close" id="close-error-modal-btn" aria-label="Закрити">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="error-modal-text" id="error-modal-message"></p>
+        <ul class="error-details-list" id="error-modal-list"></ul>
+        <div class="modal-actions">
+          <button type="button" class="btn-submit" id="ok-error-modal-btn">Зрозуміло</button>
+        </div>
       </div>
     </div>
   </div>
@@ -516,30 +657,300 @@
       return null;
     }
 
+    // Відображення вмісту комірки у звичайному режимі (перегляду)
+    function renderCellContent(td, colKey, cellValue) {
+      td.innerHTML = "";
+      td.className = "editable-cell";
+
+      if (colKey === "onVacation" || colKey === "hasDelivery") {
+        let badge = document.createElement("span");
+        let isYes = cellValue === "Так";
+        badge.className = isYes ? "badge badge-yes" : "badge badge-no";
+        badge.textContent = cellValue;
+        td.appendChild(badge);
+      } else if (colKey === "price") {
+        td.classList.add("price-cell");
+        td.textContent = cellValue;
+      } else {
+        td.textContent = cellValue;
+      }
+    }
+
+    // Переведення комірки таблиці у режим редагування по кліку
+    function startCellEdit(td, entity, item, column) {
+      if (td.classList.contains("editing")) {
+        return;
+      }
+
+      let colKey = column.key;
+      let originalValue = item[colKey];
+      td.classList.add("editing");
+      td.innerHTML = "";
+
+      let wrapper = document.createElement("div");
+      wrapper.className = "inline-edit-wrapper";
+
+      let inputEl = null;
+
+      if (column.type === "select" && column.options) {
+        inputEl = document.createElement("select");
+        inputEl.className = "inline-input";
+        for (let i = 0; i < column.options.length; i++) {
+          let opt = document.createElement("option");
+          opt.value = column.options[i];
+          opt.textContent = column.options[i];
+          if (column.options[i] === originalValue) {
+            opt.selected = true;
+          }
+          inputEl.appendChild(opt);
+        }
+      } else {
+        inputEl = document.createElement("input");
+        inputEl.type = "text";
+        inputEl.className = "inline-input";
+        inputEl.value = originalValue;
+      }
+
+      let saveBtn = document.createElement("button");
+      saveBtn.type = "button";
+      saveBtn.className = "inline-save-btn";
+      saveBtn.textContent = "✓";
+      saveBtn.title = "Зберегти";
+
+      let isFinished = false;
+
+      function finishEdit(shouldSave) {
+        if (isFinished) {
+          return;
+        }
+        isFinished = true;
+
+        let newValue = inputEl.value.trim();
+        if (!shouldSave || newValue === "") {
+          newValue = originalValue;
+        } else if (colKey === "price" && newValue.indexOf("грн") === -1) {
+          newValue = newValue + " грн";
+        }
+
+        // Якщо змінюється адреса магазина у таблиці «Магазини», синхронізуємо пов'язані записи
+        if (shouldSave && entity.id === "stores" && colKey === "storeAddress" && newValue !== originalValue) {
+          for (let p = 0; p < partsData.length; p++) {
+            if (partsData[p].storeAddress === originalValue) {
+              partsData[p].storeAddress = newValue;
+            }
+          }
+          for (let e = 0; e < employeesData.length; e++) {
+            if (employeesData[e].storeAddress === originalValue) {
+              employeesData[e].storeAddress = newValue;
+            }
+          }
+          item[colKey] = newValue;
+          refreshEntityTable("parts");
+          refreshEntityTable("employees");
+          renderCellContent(td, colKey, newValue);
+          return;
+        }
+
+        item[colKey] = newValue;
+        renderCellContent(td, colKey, newValue);
+      }
+
+      // Запобігаємо повторному спрацюванню кліку на самій комірці
+      wrapper.addEventListener("click", function (event) {
+        event.stopPropagation();
+      });
+
+      // Натискання кнопки збереження
+      saveBtn.addEventListener("mousedown", function (event) {
+        event.preventDefault();
+        finishEdit(true);
+      });
+
+      // Натискання Enter або Escape у полі вводу
+      inputEl.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          finishEdit(true);
+        } else if (event.key === "Escape") {
+          event.preventDefault();
+          finishEdit(false);
+        }
+      });
+
+      // Для select зручно зберігати також одразу при зміні значення
+      if (column.type === "select") {
+        inputEl.addEventListener("change", function () {
+          finishEdit(true);
+        });
+      }
+
+      // Збереження при кліку в будь-якій іншій частині документа (втрата фокусу)
+      inputEl.addEventListener("blur", function () {
+        finishEdit(true);
+      });
+
+      wrapper.appendChild(inputEl);
+      wrapper.appendChild(saveBtn);
+      td.appendChild(wrapper);
+
+      inputEl.focus();
+      if (inputEl.select) {
+        inputEl.select();
+      }
+    }
+
+    // Перевірка, чи прив'язаний рядок до інших таблиць перед видаленням
+    function checkRowDependencies(entityId, item) {
+      let reasons = [];
+
+      if (entityId === "stores") {
+        let targetAddress = item.storeAddress.trim();
+        let linkedEmployees = [];
+        let linkedParts = [];
+
+        for (let i = 0; i < employeesData.length; i++) {
+          if (employeesData[i].storeAddress.trim() === targetAddress) {
+            linkedEmployees.push(employeesData[i].fullName + " (" + employeesData[i].position + ")");
+          }
+        }
+
+        for (let j = 0; j < partsData.length; j++) {
+          if (partsData[j].storeAddress.trim() === targetAddress) {
+            linkedParts.push(partsData[j].name + " [" + partsData[j].code + "]");
+          }
+        }
+
+        if (linkedEmployees.length > 0) {
+          reasons.push(
+            "Таблиця «Співробітники» — працюють у цьому магазині (" +
+              linkedEmployees.length +
+              " ос.): " +
+              linkedEmployees.join(", ")
+          );
+        }
+
+        if (linkedParts.length > 0) {
+          reasons.push(
+            "Таблиця «Запчастини» — обліковуються за цією адресою (" +
+              linkedParts.length +
+              " шт.): " +
+              linkedParts.join(", ")
+          );
+        }
+      }
+
+      return reasons;
+    }
+
+    // Відкриття попапу з помилкою видалення
+    function openErrorModal(itemTitle, reasons) {
+      let overlay = document.getElementById("error-modal-overlay");
+      let messageEl = document.getElementById("error-modal-message");
+      let listEl = document.getElementById("error-modal-list");
+
+      messageEl.textContent =
+        "Запис «" +
+        itemTitle +
+        "» неможливо видалити, оскільки його дані зараз використовуються в інших таблицях:";
+
+      listEl.innerHTML = "";
+      for (let i = 0; i < reasons.length; i++) {
+        let li = document.createElement("li");
+        li.textContent = reasons[i];
+        listEl.appendChild(li);
+      }
+
+      overlay.classList.add("open");
+    }
+
+    // Закриття попапу з помилкою видалення
+    function closeErrorModal() {
+      let overlay = document.getElementById("error-modal-overlay");
+      overlay.classList.remove("open");
+    }
+
+    // Оновити лічильник записів на кнопці таба
+    function updateTabCounter(entity) {
+      let tabButtons = document.querySelectorAll(".tab-btn");
+      for (let i = 0; i < tabButtons.length; i++) {
+        let btn = tabButtons[i];
+        if (btn.getAttribute("data-tab") === entity.id) {
+          btn.textContent = entity.title + " (" + entity.data.length + ")";
+        }
+      }
+    }
+
+    // Перемальовування tbody конкретної таблиці
+    function refreshEntityTable(entityId) {
+      let entity = getEntityById(entityId);
+      let tbody = document.getElementById("tbody-" + entityId);
+      if (!entity || !tbody) {
+        return;
+      }
+
+      tbody.innerHTML = "";
+      for (let i = 0; i < entity.data.length; i++) {
+        let tr = createTableRow(entity, entity.data[i]);
+        tbody.appendChild(tr);
+      }
+      updateTabCounter(entity);
+    }
+
+    // Видалення рядка з таблиці (або показ помилки, якщо є зв'язки)
+    function handleDeleteRow(entity, item) {
+      let dependencies = checkRowDependencies(entity.id, item);
+
+      if (dependencies.length > 0) {
+        let recordName = item.name || item.fullName || item.code || item.storeAddress;
+        openErrorModal(recordName, dependencies);
+        return;
+      }
+
+      let index = entity.data.indexOf(item);
+      if (index !== -1) {
+        entity.data.splice(index, 1);
+        refreshEntityTable(entity.id);
+      }
+    }
+
     // Створення одного рядка таблиці (tr) для запису сутності
     function createTableRow(entity, item) {
       let tr = document.createElement("tr");
 
       for (let colIndex = 0; colIndex < entity.columns.length; colIndex++) {
-        let colKey = entity.columns[colIndex].key;
+        let column = entity.columns[colIndex];
+        let colKey = column.key;
         let cellValue = item[colKey];
         let td = document.createElement("td");
 
-        if (colKey === "onVacation" || colKey === "hasDelivery") {
-          let badge = document.createElement("span");
-          let isYes = cellValue === "Так";
-          badge.className = isYes ? "badge badge-yes" : "badge badge-no";
-          badge.textContent = cellValue;
-          td.appendChild(badge);
-        } else if (colKey === "price") {
-          td.className = "price-cell";
-          td.textContent = cellValue;
-        } else {
-          td.textContent = cellValue;
-        }
+        renderCellContent(td, colKey, cellValue);
+        td.title = "Натисніть, щоб змінити значення";
+
+        td.addEventListener("click", function () {
+          startCellEdit(td, entity, item, column);
+        });
 
         tr.appendChild(td);
       }
+
+      // Додаткова колонка справа з кнопкою-хрестиком для видалення рядка
+      let actionTd = document.createElement("td");
+      actionTd.className = "action-cell";
+
+      let deleteBtn = document.createElement("button");
+      deleteBtn.type = "button";
+      deleteBtn.className = "delete-row-btn";
+      deleteBtn.innerHTML = "&times;";
+      deleteBtn.title = "Видалити рядок";
+      deleteBtn.setAttribute("aria-label", "Видалити рядок");
+
+      deleteBtn.addEventListener("click", function (event) {
+        event.stopPropagation();
+        handleDeleteRow(entity, item);
+      });
+
+      actionTd.appendChild(deleteBtn);
+      tr.appendChild(actionTd);
 
       return tr;
     }
@@ -562,6 +973,11 @@
         th.textContent = col.label;
         headerRow.appendChild(th);
       }
+
+      let actionTh = document.createElement("th");
+      actionTh.className = "action-col";
+      actionTh.textContent = "Дія";
+      headerRow.appendChild(actionTh);
 
       thead.appendChild(headerRow);
       table.appendChild(thead);
@@ -734,13 +1150,7 @@
       }
 
       // Оновлюємо лічильник записів на кнопці таба
-      let tabButtons = document.querySelectorAll(".tab-btn");
-      for (let j = 0; j < tabButtons.length; j++) {
-        let btn = tabButtons[j];
-        if (btn.getAttribute("data-tab") === entity.id) {
-          btn.textContent = entity.title + " (" + entity.data.length + ")";
-        }
-      }
+      updateTabCounter(entity);
 
       closeAddModal();
     }
@@ -784,7 +1194,7 @@
 
       updateAddButtonLabel();
 
-      // Прив'язка обробників подій для модального вікна та форми
+      // Прив'язка обробників подій для модального вікна додавання
       let openModalBtn = document.getElementById("open-modal-btn");
       let closeModalBtn = document.getElementById("close-modal-btn");
       let cancelModalBtn = document.getElementById("cancel-modal-btn");
@@ -802,6 +1212,20 @@
       });
 
       entityForm.addEventListener("submit", handleFormSubmit);
+
+      // Прив'язка обробників подій для модального вікна помилки видалення
+      let errorOverlay = document.getElementById("error-modal-overlay");
+      let closeErrorBtn = document.getElementById("close-error-modal-btn");
+      let okErrorBtn = document.getElementById("ok-error-modal-btn");
+
+      closeErrorBtn.addEventListener("click", closeErrorModal);
+      okErrorBtn.addEventListener("click", closeErrorModal);
+
+      errorOverlay.addEventListener("click", function (event) {
+        if (event.target === errorOverlay) {
+          closeErrorModal();
+        }
+      });
     }
 
     document.addEventListener("DOMContentLoaded", initApp);
